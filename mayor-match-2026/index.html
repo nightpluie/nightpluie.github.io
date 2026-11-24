@@ -271,7 +271,6 @@ body[data-view=none] .notice .link{display:inline-block}
   main{padding-top:28px}
   main:has(.sheet){margin-inline:0;padding-inline:0;overflow:visible}
   .mast{padding-block:8px}
-  body[data-view=flow] #mute{display:none}
   /* 首頁：左欄標題與名牌，右欄地圖 */
   body[data-view=home] main{padding-top:6px}
   body[data-view=home] .wrap{width:min(100%,1240px)}
@@ -574,7 +573,7 @@ body[data-view=home] .mast-name{display:none}
 <header class="hero">
   <p class="kicker">2026縣市長選舉</p>
   <h1 tabindex="-1">這件事，你覺得<br><em>該怎麼做？</em></h1>
-  <p class="lead" data-seg="蒐集所有|候選人的|選舉公報|政見，|看看你|比較支持|誰的做法。"></p>
+  <p class="lead" data-seg="蒐集所有|候選人的|選舉公報|政見，|看看你|比較支持|誰的做法"></p>
   <svg class="desktop-art" focusable="false" viewBox="0 0 360 132" role="img" aria-label="桌上的三分鐘市長名牌、待批公文和印章">
 <defs><pattern id="dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.85" fill="var(--art-line)" opacity=".24"/></pattern></defs>
 <path fill="var(--wash)" d="M0 57 264 16l96 15v101H0z"/><path fill="url(#dots)" d="M0 57 264 16l96 15v101H0z"/>
@@ -608,7 +607,6 @@ body[data-view=home] .mast-name{display:none}
 <section class="map-card" aria-label="臺灣地圖，點你的縣市開始">
   <p class="map-hint" aria-hidden="true">點你的縣市開始</p>
   <div class="map-stage" id="map-stage"></div>
-  <div class="map-tip" id="map-tip" hidden aria-hidden="true"></div>
 </section>
 </div>
 </template>
@@ -823,22 +821,18 @@ function startCounty(name) {
   node.addEventListener('click', enter);
   interlude = {node, timer:setTimeout(enter, 1000)};
 }
-// 桌機滑鼠移到縣市（或鍵盤聚焦）時，在旁邊顯示「縣市・件數」的小標籤。
+// 桌機滑鼠移到縣市（或鍵盤聚焦）時，把地圖左上角的橘色提示換成「縣市・件數」；
+// 不在縣市旁邊浮出標籤，免得臺北、基隆這種相鄰的小縣市互相被蓋住。
+const HINT_TEXT = '點你的縣市開始';
 function showTip(el) {
-  const tip = document.querySelector('#map-tip');
-  const card = document.querySelector('.map-card');
+  const hint = document.querySelector('.map-hint');
   const c = el && byName.get(el.dataset.county);
-  if (!tip || !card || !c) return;
-  tip.textContent = c.county + '・' + statusOf(c);
-  tip.hidden = false;
-  const box = el.getBoundingClientRect(), host = card.getBoundingClientRect();
-  const left = Math.min(Math.max(4, box.right - host.left + 8), host.width - tip.offsetWidth - 4);
-  tip.style.left = left + 'px';
-  tip.style.top = Math.max(4, box.top - host.top + box.height / 2 - tip.offsetHeight / 2) + 'px';
+  if (!hint || !c) return;
+  hint.textContent = c.county + '・' + statusOf(c);
 }
 function hideTip() {
-  const tip = document.querySelector('#map-tip');
-  if (tip) tip.hidden = true;
+  const hint = document.querySelector('.map-hint');
+  if (hint) hint.textContent = HINT_TEXT;
 }
 function drawHome() {
   cancelInterlude();
@@ -890,7 +884,7 @@ function drawQuestion(enter = false) {
   main.innerHTML = '<div class="flow"><aside class="desk-side"><div class="nameplate"><small>三分鐘</small><b>' + esc(officeTitle(place)) +
     '</b></div><div class="folio"><strong><i class="fileicon" aria-hidden="true"></i>' + esc(officeTitle(place)) +
     '</strong><span class="counter">第 <b>' + pad(number) + '</b> 件／共 ' + total + ' 件</span></div><div class="meter" aria-hidden="true">' +
-    progress + '</div><p class="side-count">已批 ' + index + ' 件，還有 ' + remaining + ' 件</p><div class="side-tools">' + muteHTML('side-mute') +
+    progress + '</div><p class="side-count">已批 ' + index + ' 件，還有 ' + remaining + ' 件</p><div class="side-tools">' +
     '<button type="button" class="text-button side-back" data-nav="back">' + back + '</button></div></aside>' +
     '<article class="sheet paper' + (enter ? ' enter' : '') + '"><div class="field">' +
     '<span class="tab">待批公文</span><span>' + esc(place.county) + ' ／ ' + pad(number) +
