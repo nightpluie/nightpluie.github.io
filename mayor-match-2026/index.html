@@ -383,6 +383,27 @@ body[data-view=none] .notice .link{display:inline-block}
 .foot-note{margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);font-size:13px;color:var(--muted)}
 .result .lead{font-size:17px;margin:8px 0 4px}
 
+/* 刊頭的專題名：首頁有大標題所以不顯示，進入作答後才出現 */
+.mast-name{display:block;flex:0 1 auto;min-width:0;border-left:1px solid var(--rule);padding-left:9px;font-weight:900;font-size:14px;line-height:1.25;color:var(--ink);letter-spacing:-.01em}
+.mast-name span{display:inline-block;white-space:nowrap}
+.mast-tools{flex:none}
+body[data-view=home] .mast-name{display:none}
+/* 窄版：專題名排兩行，聲音開關縮成圖示加「開／關」，把位置讓給專題名 */
+@media(max-width:959px){
+  body:not([data-view=home]) #mute{font-size:0;gap:3px;padding:5px 8px}
+  body:not([data-view=home]) #mute b{font-size:12px}
+  body:not([data-view=home]) .mast-tools{gap:6px}
+  body:not([data-view=home]) .mast-name span{display:block}
+}
+@media(max-width:380px){
+  body:not([data-view=home]) .brand{width:102px;height:16px;background-size:auto 16px}
+  body:not([data-view=home]) .mast{gap:8px}
+  body:not([data-view=home]) .help-btn{width:36px;height:36px;font-size:16px}
+  .mast-name{font-size:13px;padding-left:8px}
+}
+@media(max-width:340px){body:not([data-view=home]) .brand{width:90px;height:14px;background-size:auto 14px}.mast-name{font-size:12px;padding-left:6px}}
+@media(min-width:960px){.mast-name{font-size:19px;padding-left:14px;white-space:nowrap}}
+
 </style>
 </head>
 <body>
@@ -515,7 +536,7 @@ body[data-view=none] .notice .link{display:inline-block}
   </span>
 </template>
 <div class="wrap">
-<header class="mast"><a class="brand" href="./" aria-label="回到專題首頁"></a><div class="mast-tools"><button id="help" class="help-btn" type="button" aria-label="方法與題目設計" aria-haspopup="dialog"><span aria-hidden="true">？</span></button><button id="mute" class="mute-btn" type="button" aria-label="蓋章聲音" aria-pressed="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 7h3l4-4v12l-4-4H2z"/><path class="waves" d="M12 6q3 3 0 6m2-8q5 5 0 10"/><path class="cross" d="m12 7 4 4m0-4-4 4"/></svg>聲音：<b>開</b></button></div></header>
+<header class="mast"><a class="brand" href="./" aria-label="回到專題首頁"></a><span class="mast-name"><span>這件事，</span><span>你覺得該怎麼做？</span></span><div class="mast-tools"><button id="help" class="help-btn" type="button" aria-label="方法與題目設計" aria-haspopup="dialog"><span aria-hidden="true">？</span></button><button id="mute" class="mute-btn" type="button" aria-label="蓋章聲音" aria-pressed="false"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 7h3l4-4v12l-4-4H2z"/><path class="waves" d="M12 6q3 3 0 6m2-8q5 5 0 10"/><path class="cross" d="m12 7 4 4m0-4-4 4"/></svg>聲音：<b>開</b></button></div></header>
 <div id="announce" class="sr-only" role="status" aria-live="polite"></div>
 <main id="main"><noscript><p class="nojs">這個專題需要開啟 JavaScript 才能作答。請開啟後重新整理頁面。</p></noscript></main>
 <footer class="footer">
@@ -575,9 +596,9 @@ body[data-view=none] .notice .link{display:inline-block}
 </g></svg>
 </header>
 <ol class="steps" aria-label="玩法三步驟">
-  <li><span class="step-no" aria-hidden="true">1</span><span class="step-text">點地圖上你的縣市，馬上開始</span></li>
+  <li><span class="step-no" aria-hidden="true">1</span><span class="step-text">點地圖上你的縣市</span></li>
   <li><span class="step-no" aria-hidden="true">2</span><span class="step-text">當三分鐘縣市長：每件事選你支持的做法，蓋章批示</span></li>
-  <li><span class="step-no" aria-hidden="true">3</span><span class="step-text">批完揭曉：這些做法出自哪幾位候選人的選舉公報</span></li>
+  <li><span class="step-no" aria-hidden="true">3</span><span class="step-text">批完揭曉：這些做法出自哪些候選人的選舉公報政見</span></li>
 </ol>
 <div class="fallback" id="fallback" hidden>
   <label for="county-select">選擇縣市</label>
@@ -902,9 +923,14 @@ function makeThud(ctx) {
     const thump = .62 * Math.sin(phase) * Math.exp(-t / .035);
     const wood = .18 * Math.sin(2 * Math.PI * 244 * t) * Math.exp(-t / .017);
     const paper = .30 * (softNoise - lowNoise) * Math.exp(-t / .012);
+    // 手機的小喇叭幾乎放不出 150Hz 以下的聲音，所以另外加一段中頻的敲擊，讓「咚」在手機上也聽得到。
+    const knock = .34 * Math.sin(2 * Math.PI * 620 * t) * Math.exp(-t / .011) + .2 * Math.sin(2 * Math.PI * 1150 * t) * Math.exp(-t / .006);
     const envelope = Math.min(1, t / .002, (samples.length - 1 - i) / (.008 * rate));
-    samples[i] = envelope * (thump + wood + paper);
+    samples[i] = envelope * (thump + wood + paper * 1.4 + knock);
   }
+  let peak = 0;
+  for (let i = 0; i < samples.length; i++) peak = Math.max(peak, Math.abs(samples[i]));
+  if (peak > 0) for (let i = 0; i < samples.length; i++) samples[i] *= .9 / peak;
   return buffer;
 }
 function prepareAudio() {
@@ -913,7 +939,7 @@ function prepareAudio() {
     if (!audio) {
       audio = new (window.AudioContext || window.webkitAudioContext)({latencyHint:'interactive'});
       master = audio.createGain();
-      master.gain.value = muted ? 0 : .72;
+      master.gain.value = muted ? 0 : .9;
       master.connect(audio.destination);
       thud = makeThud(audio);
     }
@@ -938,7 +964,7 @@ document.addEventListener('click', event => {
   if (!event.target.closest('.mute-btn')) return;
   muted = !muted;
   syncMute();
-  if (master) master.gain.value = muted ? 0 : .72;
+  if (master) master.gain.value = muted ? 0 : .9;
   if (!muted) prepareAudio();
 });
 function scheduleSound(contactAt, level = 1) {
