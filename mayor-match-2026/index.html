@@ -342,7 +342,8 @@ body[data-view=none] .notice .link{display:inline-block}
 /* 刊頭：小問號與聲音 */
 .mast-tools{margin-left:auto;display:flex;align-items:center;gap:8px}
 .mast-tools .mute-btn{margin-left:0}
-.help-btn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--ink);font:900 18px/1 var(--title);display:grid;place-items:center;padding:0}
+.help-btn{flex:none;position:relative;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:var(--paper);color:var(--ink);font:900 15px/1 var(--title);display:grid;place-items:center;padding:0}
+.help-btn::after{content:"";position:absolute;inset:-5px}
 .help-btn:hover{border-color:var(--ink)}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .method-dialog{width:min(92vw,560px);max-height:86vh;padding:0;border:1px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);box-shadow:0 12px 40px rgba(40,40,36,.3)}
@@ -397,7 +398,7 @@ body[data-view=home] .mast-name{display:none}
 @media(max-width:380px){
   body:not([data-view=home]) .brand{width:102px;height:16px;background-size:auto 16px}
   body:not([data-view=home]) .mast{gap:8px}
-  body:not([data-view=home]) .help-btn{width:36px;height:36px;font-size:16px}
+  body:not([data-view=home]) .help-btn{width:30px;height:30px;font-size:14px}
   .mast-name{font-size:13px;padding-left:8px}
 }
 @media(max-width:340px){body:not([data-view=home]) .brand{width:90px;height:14px;background-size:auto 14px}.mast-name{font-size:12px;padding-left:6px}}
@@ -561,7 +562,7 @@ body[data-view=home] .mast-name{display:none}
     <li>兩位以上候選人寫了同一項做法時，只出一張卡，揭曉時每位都算一個。</li>
     <li>三種以上做法的題目可以選不只一個，你選的每一個都算。</li>
     <li>「都支持」等於每個做法都選；「都不支持」與「略過」不算進任何一位候選人。</li>
-    <li>有些候選人沒有出現在題目裡：題目只收錄至少兩位候選人對同一件事各自提出具體做法、而且做法不同的情況。</li>
+    <li>有些候選人沒有出現在題目裡。一題要成立，得有至少兩位候選人對同一件事都寫出具體做法。如果某位候選人談的事沒有別人也寫到，或公報上寫的是方向、目標而沒有具體做法，就不會出現在題目裡。他的完整政見可以在選舉公報看到。</li>
     <li>此政見互動工具不會留存你的作答紀錄以及個人資料。</li>
   </ul>
   </div>
